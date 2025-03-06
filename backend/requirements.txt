@@ -1,5 +1,5 @@
-echo flask 
-echo pandas
-echo openpyxl
-echo psycopg2-binary
-echo gunicorn 
+flask 
+pandas
+openpyxl
+psycopg2-binary
+gunicorn 
