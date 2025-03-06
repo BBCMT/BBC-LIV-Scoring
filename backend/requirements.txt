@@ -1,0 +1,5 @@
+echo flask > requirements.txt
+echo pandas >> requirements.txt
+echo openpyxl >> requirements.txt
+echo psycopg2-binary >> requirements.txt
+echo gunicorn >> requirements.txt
