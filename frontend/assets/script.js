@@ -70,4 +70,5 @@ function populateDropdowns(data) {
     });
 
     console.log("Dropdowns populated successfully.");
+
 }
