@@ -7,13 +7,13 @@ from filelock import FileLock
 
 app = Flask(__name__)
 
-SCORES_FILE = "D:/BBC_LIV/BBC_LIV_online/backend/data/scores.xlsx"
-LEADERBOARD_DIR = "D:/BBC_LIV/BBC_LIV_online/backend/data"
-COURSE_FILE = "D:/BBC_LIV/BBC_LIV_online/backend/data/course_scorecard.xlsx"
-TEAM_FILE = "D:/BBC_LIV/BBC_LIV_online/backend/data/team_list.xlsx"
-PIN_CODE = "BBCforever!"
-FILE_LOCK = "D:/BBC_LIV/BBC_LIV_online/backend/data/scores.lock"
-BACKUP_DIR = "D:/BBC_LIV/BBC_LIV_online/backend/data/MTbackup/"
+SCORES_FILE = "backend/data/scores.xlsx"
+LEADERBOARD_DIR = "backend/data/"
+COURSE_FILE = "backend/data/course_scorecard.xlsx"
+TEAM_FILE = "backend/data/team_list.xlsx"
+PIN_CODE = "BBCforever"
+FILE_LOCK = "backend/data/scores.lock"
+BACKUP_DIR = "backend/data/MTbackup/"
 
 @app.route('/player_input')
 def player_input():
