@@ -6,9 +6,9 @@ import glob
 app = Flask(__name__)
 
 # File Paths
-SCORES_FILE = "D:/BBC_LIV/player_input/data/scores.xlsx"
-LEADERBOARD_FILE = "D:/BBC_LIV/leaderboard/data/leaderboard.xlsx"
-BACKUP_DIR = "D:/BBC_LIV/player_input/MTbackup/"
+SCORES_FILE = "D:/BBC_LIV/BBC_LIV_online/backend/data/scores.xlsx"
+LEADERBOARD_FILE = "D:/BBC_LIV/BBC_LIV_online/backend/data/leaderboard.xlsx"
+BACKUP_DIR = "D:/BBC_LIV/BBC_LIV_online/backend/data/MTbackup/"
 
 def load_latest_backup():
     """Finds the most recent leaderboard backup in MTbackup."""
