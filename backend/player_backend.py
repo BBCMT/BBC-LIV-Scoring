@@ -5,7 +5,7 @@ from flask import Flask, jsonify, request, render_template
 from datetime import datetime
 from filelock import FileLock
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="frontend")  # Set template folder to frontend
 
 #conver to LF
 
@@ -17,9 +17,10 @@ PIN_CODE = "BBCforever"
 FILE_LOCK = "backend/data/scores.lock"
 BACKUP_DIR = "backend/data/MTbackup/"
 
-@app.route('/player_input')
-def player_input():
-    return render_template('player_input.html')  # Ensure this file exists inside 'templates' folder
+@app.route("/")
+def home():
+    return render_template("index.html")  # Serve index.html/
+
 
 @app.route("/get_teams_and_players", methods=["GET"])
 def get_teams_and_players():
@@ -169,6 +170,10 @@ def submit_score():
         return jsonify({"error": str(e)}), 500
 
 #flask_get_event_leaderboard
+@app.route("/")
+def home():
+    return "Server is running!"
+
 @app.route("/get_event_leaderboard", methods=["GET"])
 def get_event_leaderboard():
     try:
@@ -307,12 +312,16 @@ def mt_scores_backup():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route("/leaderboard")
+def leaderboard():
+    return render_template("leaderboard.html")  # Serve leaderboard.html
+
 print("Registered Routes:")
 with app.test_request_context():
     print(app.url_map)  # 👈 This will print all registered routes
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5002, debug=True)
+    app.run(debug=True)
 
 
 
