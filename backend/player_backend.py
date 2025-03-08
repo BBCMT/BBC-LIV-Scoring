@@ -7,6 +7,8 @@ from filelock import FileLock
 
 app = Flask(__name__)
 
+#conver to LF
+
 SCORES_FILE = "backend/data/scores.xlsx"
 LEADERBOARD_DIR = "backend/data/"
 COURSE_FILE = "backend/data/course_scorecard.xlsx"

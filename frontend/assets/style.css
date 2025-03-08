@@ -12,11 +12,13 @@ table {
     border-collapse: collapse;
     margin-top: 20px;
 }
+
 th, td {
     padding: 10px;
     border: 1px solid #ddd;
     text-align: center;
 }
+
 th {
     background-color: #007BFF;
     color: white;

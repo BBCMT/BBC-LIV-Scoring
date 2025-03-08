@@ -5,6 +5,7 @@ import glob
 
 app = Flask(__name__)
 
+#conver to LF
 # File Paths
 SCORES_FILE = "D:/BBC_LIV/BBC_LIV_online/backend/data/scores.xlsx"
 LEADERBOARD_FILE = "D:/BBC_LIV/BBC_LIV_online/backend/data/leaderboard.xlsx"
