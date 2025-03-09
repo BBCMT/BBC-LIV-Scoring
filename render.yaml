@@ -1,0 +1,20 @@
+services:
+  - name: bbc-liv-backend
+    type: web
+    runtime: python
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11
+    buildCommand: |
+      pip install --no-cache-dir --upgrade pip
+      pip install --no-cache-dir --force-reinstall -r requirements.txt
+    startCommand: |
+      PYTHONPATH=$(pwd)/backend gunicorn --chdir backend player_backend:app
+    disk:
+      - name: data-storage
+        mountPath: /backend/data
+        sizeGB: 1
+    staticPublishPath: backend/data
+    includedFiles:
+      - requirements.txt
+      - backend/data/*.xlsx
