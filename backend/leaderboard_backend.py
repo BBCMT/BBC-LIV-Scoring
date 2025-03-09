@@ -7,13 +7,16 @@ import glob
 TEMPLATE_DIR = os.path.abspath("frontend/templates")
 STATIC_DIR = os.path.abspath("frontend/static")
 
+print("Template Directory:", TEMPLATE_DIR)  # Debugging line
+
 app = Flask(__name__, template_folder=TEMPLATE_DIR, static_folder=STATIC_DIR)
 
-#conver to LF
+DATA_DIR = "/backend/data/"
+
 # File Paths
-SCORES_FILE = "D:/BBC_LIV/BBC_LIV_online/backend/data/scores.xlsx"
-LEADERBOARD_FILE = "D:/BBC_LIV/BBC_LIV_online/backend/data/leaderboard.xlsx"
-BACKUP_DIR = "D:/BBC_LIV/BBC_LIV_online/backend/data/MTbackup/"
+SCORES_FILE = os.path.join(DATA_DIR, "scores.xlsx")
+LEADERBOARD_FILE = os.path.join(DATA_DIR, "leaderboard.xlsx")
+BACKUP_DIR = os.path.join(DATA_DIR, "MTbackup/")
 
 def load_latest_backup():
     """Finds the most recent leaderboard backup in MTbackup."""
@@ -78,6 +81,9 @@ def update_leaderboard():
 def serve_leaderboard():
     return send_from_directory("frontend/templates", "leaderboard.html")  # ✅ Adjust path
 
+@app.route("/api/get_scores")
+def get_scores():
+    return send_from_directory(DATA_DIR, "scores.xlsx")
 
 # API Route Example
 @app.route("/api/leaderboard", methods=["GET"])

@@ -31,15 +31,14 @@ CORS(app, resources={r"/*": {"origins": "*"}})  # ✅ Allow all origins
 
 #print("🛠 DEBUG: Files in backend ->", os.listdir("backend"))
 
-#conver to LF
+data_dir = "/backend/data/"
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-SCORES_FILE = os.path.join(BASE_DIR, "backend/data/scores.xlsx")
-LEADERBOARD_FILE = os.path.join(BASE_DIR, "backend/data/leaderboard.xlsx")  # ✅ Define missing variable
-COURSE_FILE = os.path.join(BASE_DIR, "backend/data/course_scorecard.xlsx")
-TEAM_FILE = os.path.join(BASE_DIR, "backend/data/team_list.xlsx")
-PIN_CODE = "BBCforever!"
-FILE_LOCK = os.path.join(BASE_DIR, "backend/data/scores.lock")
-BACKUP_DIR = os.path.join(BASE_DIR, "backend/data/MTbackup/")
+SCORES_FILE = os.path.join(DATA_DIR, "scores.xlsx")
+LEADERBOARD_FILE = os.path.join(DATA_DIR, "leaderboard.xlsx")
+COURSE_FILE = os.path.join(DATA_DIR, "course_scorecard.xlsx")
+TEAM_FILE = os.path.join(DATA_DIR, "team_list.xlsx")
+FILE_LOCK = os.path.join(DATA_DIR, "scores.lock")
+BACKUP_DIR = os.path.join(DATA_DIR, "MTbackup/")
 UPLOAD_FOLDER = "/backend/data"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)  # Ensure the folder exists
 
@@ -115,7 +114,7 @@ def get_playing_handicap():
         gender = data["gender"]
 
         # Load golf course data to get Slope Rating (SR) and Course Rating (CR)
-        course_file = "data/course_info.xlsx"  # Ensure this file exists
+        course_file = os.path.join(DATA_DIR, "course_info.xlsx") # Ensure this file exists
         df_course = pd.read_excel(course_file)
 
         # Extract SR and CR based on gender
