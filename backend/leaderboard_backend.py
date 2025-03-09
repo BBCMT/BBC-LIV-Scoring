@@ -2,6 +2,10 @@ from flask import Flask, send_from_directory, jsonify
 import pandas as pd
 import os
 import glob
+import logging
+
+# Configure logging to show debug messages
+logging.basicConfig(level=logging.DEBUG)
 
 # Absolute path to templates and static directories
 TEMPLATE_DIR = os.path.abspath("frontend/templates")

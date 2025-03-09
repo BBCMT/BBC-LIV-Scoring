@@ -1,11 +1,18 @@
 import pandas as pd
 import os, shutil
 import glob
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify, request, render_template, send_from_directory
 from datetime import datetime
 from filelock import FileLock
 from flask_cors import CORS
 import traceback
+import logging
+
+# Configure logging to show debug messages
+logging.basicConfig(level=logging.DEBUG)
+
+# Configure logging to show debug messages
+logging.basicConfig(level=logging.DEBUG)
 
 data_dir = "/backend/data/"
 
@@ -46,6 +53,9 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)  # Ensure the folder exists
 def home():
     return render_template("index.html")  # Serve index.html/
 
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(app.static_folder, "favicon.ico", mimetype="image/vnd.microsoft.icon")
 
 @app.route("/upload_xlsx", methods=["POST"])
 def upload_xlsx():
