@@ -52,8 +52,16 @@ def upload_xlsx():
     file = request.files["file"]
     if file.filename == "":
         return "No selected file", 400
-    file.save(os.path.join(UPLOAD_FOLDER, file.filename))
-    return f"File {file.filename} uploaded successfully", 200
+    
+    file_path = os.path.join(UPLOAD_FOLDER, file.filename)
+    file.save(file_path)
+
+    # ✅ Print the path in logs and return it in the API response
+    print(f"🛠 DEBUG: File saved to {file_path}")  
+    return jsonify({
+        "message": f"File {file.filename} uploaded successfully",
+        "path": file_path
+    }), 200
 
 @app.route("/get_teams_and_players", methods=["GET"])
 def get_teams_and_players():
