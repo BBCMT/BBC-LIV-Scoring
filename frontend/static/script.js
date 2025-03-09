@@ -1,5 +1,4 @@
-// convert to LF
-// ? Update with your actual Render backend URL
+// ?Update with your actual Render backend URL
 const BASE_URL = "https://bbc-liv-scoring.onrender.com";
 
 // ? Ensure the script runs only when the page is fully loaded
@@ -28,8 +27,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Upload button event listener
     const uploadBtn = document.getElementById("uploadLeaderboard");
-    if (uploadLeaderboard) {
-        uploadLeaderboard.addEventListener("click", function () {
+    if (uploadBtn) {
+        uploadBtn.addEventListener("click", function () {
             console.log("Upload button clicked!");
             // Add your upload logic here
         });
@@ -67,10 +66,5 @@ function populateDropdowns(data) {
     });
 
     console.log("Dropdowns populated successfully.");
-    
-    document.addEventListener("DOMContentLoaded", function () {
-        console.log("Script loaded successfully! Fetching data...");
-        loadTeamsAndPlayers();
-        loadParData();
-    });
+
 }
