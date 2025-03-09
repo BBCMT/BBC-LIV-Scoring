@@ -5,7 +5,11 @@ from flask import Flask, jsonify, request, render_template
 from datetime import datetime
 from filelock import FileLock
 
-app = Flask(__name__, template_folder="frontend/templates",static_folder="../frontend/static")  # Set template folder to frontend/templates
+# Absolute path to templates and static directories
+TEMPLATE_DIR = os.path.abspath("frontend/templates")
+STATIC_DIR = os.path.abspath("frontend/static")
+
+app = Flask(__name__, template_folder=TEMPLATE_DIR, static_folder=STATIC_DIR)
 
 #conver to LF
 
