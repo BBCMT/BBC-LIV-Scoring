@@ -7,6 +7,9 @@ from filelock import FileLock
 from flask_cors import CORS
 import traceback
 
+
+PORT = int(os.environ.get("PORT", 10000))  # Default to 10000 if PORT is not set
+
 # Get the absolute path of the backend directory
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
@@ -287,7 +290,7 @@ with app.test_request_context():
     print(app.url_map)  # 👈 This will print all registered routes
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5002)  # Render auto-assigns a port, so this is only for local testing
+    app.run(host="0.0.0.0", port=PORT)  # Render auto-assigns a port, so this is only for local testing
 
 
 
