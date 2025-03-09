@@ -19,16 +19,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Load teams and players data
     fetch(`${BASE_URL}/get_teams_and_players`)
-        .then(response => {
+        .then (response => {
             if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
             return response.json();
         })
         .then(data => {
             console.log("Teams and Players Loaded:", data);
-            // Add logic to populate dropdowns
+            populateDropdowns(data);  // Ensure dropdowns are updated
         })
-        .catch(err => console.error("Error loading teams/players:", err));
-        
+        .catch(error => {
+            console.error("Error loading teams/players:", error);
+        });
+
     // Upload button event listener
     const uploadBtn = document.getElementById("uploadLeaderboard");
     if (uploadBtn) {
@@ -41,8 +43,11 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
-// Function to populate dropdowns with teams and players
 function populateDropdowns(data) {
+    if (!data.teams || !data.players) {
+        console.error("Error: Missing teams or players data.");
+        return;
+    }
     const teamSelect = document.getElementById("teamSelect");
     const playerSelect = document.getElementById("playerSelect");
 
@@ -70,5 +75,5 @@ function populateDropdowns(data) {
     });
 
     console.log("Dropdowns populated successfully.");
-
 }
+
