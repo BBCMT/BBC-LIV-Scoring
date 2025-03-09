@@ -17,22 +17,22 @@ TEMPLATE_DIR = os.path.abspath("frontend/templates")
 STATIC_DIR = os.path.abspath("frontend/static")
 
 app = Flask(__name__,
-            template_folder=os.path.join(FRONTEND_DIR, "templates"),  # ✅ Correct path for HTML files
-            static_folder=os.path.join(FRONTEND_DIR, "static"),# ✅ Correct path for CSS/JS files
-            )  
-
+            template_folder=os.path.join(os.path.abspath(os.path.dirname(__file__)), "../frontend/templates"),
+            static_folder=os.path.join(os.path.abspath(os.path.dirname(__file__)), "../frontend/static")
+            )
 CORS(app, resources={r"/*": {"origins": "*"}})  # ✅ Allow all origins
 
 print("🛠 DEBUG: Files in backend ->", os.listdir("backend"))
 
 #conver to LF
-SCORES_FILE = "backend/data/scores.xlsx"
-LEADERBOARD_DIR = "backend/data/"
-COURSE_FILE = "backend/data/course_scorecard.xlsx"
-TEAM_FILE = "backend/data/team_list.xlsx"
-PIN_CODE = "BBCforever"
-FILE_LOCK = "backend/data/scores.lock"
-BACKUP_DIR = "backend/data/MTbackup/"
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+SCORES_FILE = os.path.join(BASE_DIR, "backend/data/scores.xlsx")
+LEADERBOARD_FILE = os.path.join(BASE_DIR, "backend/data/leaderboard.xlsx")  # ✅ Define missing variable
+COURSE_FILE = os.path.join(BASE_DIR, "backend/data/course_scorecard.xlsx")
+TEAM_FILE = os.path.join(BASE_DIR, "backend/data/team_list.xlsx")
+PIN_CODE = "BBCforever!"
+FILE_LOCK = os.path.join(BASE_DIR, "backend/data/scores.lock")
+BACKUP_DIR = os.path.join(BASE_DIR, "backend/data/MTbackup/")
 
 @app.route("/")
 def home():
@@ -186,87 +186,6 @@ def submit_score():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-#flask_get_event_leaderboard
-@app.route("/get_event_leaderboard", methods=["GET"])
-def get_event_leaderboard():
-    try:
-        if not os.path.exists(SCORES_FILE):
-            return jsonify([])
-        df = pd.read_excel(SCORES_FILE)
-        df_sorted = df.sort_values(by=["total_stroke"], ascending=True)
-        
-        # Determine Par King (player with the most Pars)
-        par_king = df.loc[df["Par Count"].idxmax(), "player"] if not df.empty else "No data"
-        
-        return jsonify({
-            "leaderboard": df_sorted.to_dict(orient="records"),
-            "par_king": par_king
-        })
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-    
-
-#flask_get_season_leaderboard
-@app.route("/get_season_leaderboard", methods=["GET"])
-def get_season_leaderboard():
-    try:
-        file_pattern = os.path.join(LEADERBOARD_DIR, "event_scores_*.xlsx")
-        files = glob.glob(file_pattern)
-        
-        if not files:
-            return jsonify([])
-        
-        df_list = [pd.read_excel(f) for f in files]
-        df_season = pd.concat(df_list, ignore_index=True)
-        
-        # Compute Individual Stroke Play Leaderboard (Group A) - Lower is better
-        df_stroke = df_season.groupby("player").agg({
-            "total_stroke": ["min", "mean"],  # Best round & average strokes
-            "exact_hcp": "mean"
-        }).reset_index()
-        
-        # Compute sum of best 3 rounds and worst 3 rounds for tiebreaking
-        df_best3 = df_season.groupby("player")["total_stroke"].nsmallest(3).groupby("player").sum()
-        df_worst3 = df_season.groupby("player")["total_stroke"].nlargest(3).groupby("player").sum()
-        
-        df_stroke = df_stroke.merge(df_best3, on="player", suffixes=("", "_best3"))
-        df_stroke = df_stroke.merge(df_worst3, on="player", suffixes=("", "_worst3"))
-        
-        df_stroke = df_stroke.sort_values(by=["total_stroke_min", "total_stroke_best3", "exact_hcp", "total_stroke_worst3"], ascending=[True, True, False, True])
-        
-        # Compute Stableford Leaderboard (Group A & B) - Higher is better
-        df_stableford = df_season.groupby("player").agg({
-            "stableford point": "sum",
-            "exact_hcp": "mean"
-        }).reset_index()
-        
-        # Assign points based on ranking
-        df_stableford["points"] = 1
-        df_stableford.loc[df_stableford.index == 0, "points"] = 5  # 1st place
-        df_stableford.loc[df_stableford.index == 1, "points"] = 4  # 2nd place
-        df_stableford.loc[df_stableford.index == 2, "points"] = 3  # 3rd place
-        
-        df_stableford = df_stableford.sort_values(by=["points", "exact_hcp"], ascending=[False, True])
-        
-        # Compute Team Leaderboard - Points System
-        df_team = df_season.groupby("Group").agg({
-            "stableford point": "sum",
-            "player": "count"
-        }).reset_index()
-        df_team = df_team.sort_values(by=["stableford point"], ascending=False)
-        
-        # Assign team points
-        team_points_distribution = [5, 4, 3] + [1] * (len(df_team) - 3)
-        df_team["points"] = team_points_distribution[:len(df_team)]
-        
-        return jsonify({
-            "stroke_play": df_stroke.to_dict(orient="records"),
-            "stableford": df_stableford.to_dict(orient="records"),
-            "team_ranking": df_team.to_dict(orient="records"),
-        })
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
 @app.route("/mt_competition_prep", methods=["POST"])
 def mt_competition_prep():
     try:
@@ -303,24 +222,22 @@ def mt_competition_prep():
 def mt_scores_backup():
     try:
         data = request.json
-        pin = data.get("pin", "").strip()  # ✅ Trim spaces before checking
+        pin = data.get("pin", "").strip()  
 
-          # ✅ Correct PIN check
-        if pin != "BBCforever!":
+        if pin != PIN_CODE:
             return jsonify({"error": "Please contact BBC-MT"}), 403
 
-        # ✅ Backup `scores.xlsx`
-        timestamp = datetime.now().strftime("%y%m%d")  # ✅ YYMMDD format
+        timestamp = datetime.now().strftime("%y%m%d")
         scores_backup_path = os.path.join(BACKUP_DIR, f"score_{timestamp}.xlsx")
+        leaderboard_backup_path = os.path.join(BACKUP_DIR, f"leaderboard_{timestamp}.xlsx")
+
         if os.path.exists(SCORES_FILE):
             shutil.copy(SCORES_FILE, scores_backup_path)
 
-        # ✅ Backup `leaderboard.xlsx`
-        leaderboard_backup_path = os.path.join(BACKUP_DIR, f"leaderboard_{timestamp}.xlsx")
         if os.path.exists(LEADERBOARD_FILE):
             shutil.copy(LEADERBOARD_FILE, leaderboard_backup_path)
 
-        return jsonify({"message": "Backup Successful!"})  # ✅ Correct PIN now shows success message
+        return jsonify({"message": "Backup Successful!"})
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -332,7 +249,7 @@ def leaderboard():
 # Serve static files (optional, if needed)
 @app.route("/static/<path:filename>")
 def static_files(filename):
-    return send_from_directory(os.path.join(FRONTEND_DIR, "static"), filename)
+    return send_from_directory(os.path.join(BASE_DIR, "../frontend/static"), filename)
 
 print("Registered Routes:")
 with app.test_request_context():
