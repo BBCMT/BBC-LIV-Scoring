@@ -37,6 +37,8 @@ TEAM_FILE = os.path.join(BASE_DIR, "backend/data/team_list.xlsx")
 PIN_CODE = "BBCforever!"
 FILE_LOCK = os.path.join(BASE_DIR, "backend/data/scores.lock")
 BACKUP_DIR = os.path.join(BASE_DIR, "backend/data/MTbackup/")
+UPLOAD_FOLDER = "/backend/data"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)  # Ensure the folder exists
 
 @app.route("/")
 def home():
