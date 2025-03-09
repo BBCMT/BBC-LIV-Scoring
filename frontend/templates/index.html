@@ -69,7 +69,7 @@
 
         console.log(`Submitting PIN for ${endpoint}...`); // ✅ Debugging log
 
-        fetch(`http://127.0.0.1:5002/${endpoint}`, {
+        fetch(`${BACKEND_URL}/${endpoint}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ pin: pin })
@@ -126,10 +126,11 @@
       const exactHandicapField = document.getElementById("exactHandicap");
       const playingHandicapDisplay = document.getElementById("playingHandicap");
       const playerGroupDisplay = document.getElementById("playerGroup");
+      const BACKEND_URL = "https://bbc-liv-scoring.onrender.com";
 
       
       // ✅ Pre-load PAR & Handicap immediately
-      fetch("http://127.0.0.1:5002/get_course_par")
+      fetch(`${BACKEND_URL}/get_course_par`)
           .then((res) => res.json())
           .then((data) => {
               for (let i = 1; i <= 18; i++) {
@@ -140,7 +141,7 @@
           .catch((err) => console.error("Error pre-loading PAR data:", err));
 
       // Load teams & players
-      fetch("http://127.0.0.1:5002/get_teams_and_players")
+      fetch(`${BACKEND_URL}/get_teams_and_players")
         .then((res) => res.json())
         .then((data) => {
           // Populate Team select
@@ -180,7 +181,7 @@
               
 
               // ✅ Fetch and update Playing Handicap
-              fetch("http://127.0.0.1:5002/get_playing_handicap", {
+              fetch(`${BACKEND_URL}/get_playing_handicap", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({
@@ -266,7 +267,7 @@
             };
 
             // ✅ Step 1: Submit Score to `scores.xlsx`
-            fetch("http://127.0.0.1:5002/submit_score", {
+            fetch(`${BACKEND_URL}/submit_score", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload)
@@ -498,7 +499,7 @@
       </div>
 
       <!-- 🔹 Upload & Display Leaderboard Button -->
-      <button id="uploadLeaderboard">Upload and Display Leaderboard</button>
+      <button id="uploadBtn">Upload & Display Leaderboard</button>
     </form>
 
     <!-- BOTTOM: "MT-scores-backup" -->

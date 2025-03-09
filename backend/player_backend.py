@@ -4,6 +4,7 @@ import glob
 from flask import Flask, jsonify, request, render_template
 from datetime import datetime
 from filelock import FileLock
+from flask_cors import CORS
 
 # Get the absolute path of the backend directory
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -17,7 +18,10 @@ STATIC_DIR = os.path.abspath("frontend/static")
 
 app = Flask(__name__,
             template_folder=os.path.join(FRONTEND_DIR, "templates"),  # ✅ Correct path for HTML files
-            static_folder=os.path.join(FRONTEND_DIR, "static"))  # ✅ Correct path for CSS/JS files
+            static_folder=os.path.join(FRONTEND_DIR, "static"),# ✅ Correct path for CSS/JS files
+            )  
+
+CORS(app, resources={r"/*": {"origins": "*"}})  # ✅ Allow all origins
 
 print("🛠 DEBUG: Files in backend ->", os.listdir("backend"))
 
@@ -335,7 +339,7 @@ with app.test_request_context():
     print(app.url_map)  # 👈 This will print all registered routes
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    app.run(host="0.0.0.0", port=5002)  # Render auto-assigns a port, so this is only for local testing
 
 
 
