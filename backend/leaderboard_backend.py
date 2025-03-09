@@ -3,7 +3,7 @@ import pandas as pd
 import os
 import glob
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="../frontend/templates", static_folder="../frontend/static")
 
 #conver to LF
 # File Paths
@@ -69,14 +69,16 @@ def update_leaderboard():
 
         return jsonify({"message": "Leaderboard updated successfully"})
 
+# Serve Leaderboard Page
 @app.route("/leaderboard.html")
 def serve_leaderboard():
-    """Serve the leaderboard HTML page"""
-    try:
-        return send_from_directory(os.path.abspath("D:/BBC_LIV/leaderboard/static"), "leaderboard.html")
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-    
+    return send_from_directory("frontend/templates", "leaderboard.html")  # ✅ Adjust path
+
+
+# API Route Example
+@app.route("/api/leaderboard", methods=["GET"])
+def leaderboard_api():
+    return jsonify({"message": "Leaderboard API is working!", "status": "success"})
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5003, debug=True)
+    app.run(debug=True)

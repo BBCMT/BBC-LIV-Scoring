@@ -5,7 +5,7 @@ from flask import Flask, jsonify, request, render_template
 from datetime import datetime
 from filelock import FileLock
 
-app = Flask(__name__, template_folder="frontend")  # Set template folder to frontend
+app = Flask(__name__, template_folder="frontend/templates",static_folder="../frontend/static")  # Set template folder to frontend/templates
 
 #conver to LF
 
@@ -170,10 +170,6 @@ def submit_score():
         return jsonify({"error": str(e)}), 500
 
 #flask_get_event_leaderboard
-@app.route("/")
-def home():
-    return "Server is running!"
-
 @app.route("/get_event_leaderboard", methods=["GET"])
 def get_event_leaderboard():
     try:
