@@ -5,6 +5,7 @@ from flask import Flask, jsonify, request, render_template
 from datetime import datetime
 from filelock import FileLock
 from flask_cors import CORS
+import traceback
 
 # Get the absolute path of the backend directory
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -250,6 +251,13 @@ def leaderboard():
 @app.route("/static/<path:filename>")
 def static_files(filename):
     return send_from_directory(os.path.join(BASE_DIR, "../frontend/static"), filename)
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+    """Log full errors for debugging."""
+    print("🛠 ERROR: ", str(e))
+    print(traceback.format_exc())  # Print full error details
+    return "Internal Server Error", 500
 
 print("Registered Routes:")
 with app.test_request_context():
