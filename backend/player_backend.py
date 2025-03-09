@@ -19,8 +19,9 @@ app = Flask(__name__,
             template_folder=os.path.join(FRONTEND_DIR, "templates"),  # ✅ Correct path for HTML files
             static_folder=os.path.join(FRONTEND_DIR, "static"))  # ✅ Correct path for CSS/JS files
 
-#conver to LF
+print("🛠 DEBUG: Files in backend ->", os.listdir("backend"))
 
+#conver to LF
 SCORES_FILE = "backend/data/scores.xlsx"
 LEADERBOARD_DIR = "backend/data/"
 COURSE_FILE = "backend/data/course_scorecard.xlsx"
