@@ -13,6 +13,9 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 # Get the absolute path of the frontend directory
 FRONTEND_DIR = os.path.join(BASE_DIR, "../frontend")
 
+UPLOAD_FOLDER = "/backend/data"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)  # Ensure the folder exists
+
 # Absolute path to templates and static directories
 TEMPLATE_DIR = os.path.abspath("frontend/templates")
 STATIC_DIR = os.path.abspath("frontend/static")
@@ -39,6 +42,16 @@ BACKUP_DIR = os.path.join(BASE_DIR, "backend/data/MTbackup/")
 def home():
     return render_template("index.html")  # Serve index.html/
 
+
+@app.route("/upload_xlsx", methods=["POST"])
+def upload_xlsx():
+    if "file" not in request.files:
+        return "No file part", 400
+    file = request.files["file"]
+    if file.filename == "":
+        return "No selected file", 400
+    file.save(os.path.join(UPLOAD_FOLDER, file.filename))
+    return f"File {file.filename} uploaded successfully", 200
 
 @app.route("/get_teams_and_players", methods=["GET"])
 def get_teams_and_players():
