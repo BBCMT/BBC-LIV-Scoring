@@ -5,11 +5,19 @@ from flask import Flask, jsonify, request, render_template
 from datetime import datetime
 from filelock import FileLock
 
+# Get the absolute path of the backend directory
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+
+# Get the absolute path of the frontend directory
+FRONTEND_DIR = os.path.join(BASE_DIR, "../frontend")
+
 # Absolute path to templates and static directories
 TEMPLATE_DIR = os.path.abspath("frontend/templates")
 STATIC_DIR = os.path.abspath("frontend/static")
 
-app = Flask(__name__, template_folder=TEMPLATE_DIR, static_folder=STATIC_DIR)
+app = Flask(__name__,
+            template_folder=os.path.join(FRONTEND_DIR, "templates"),  # ✅ Correct path for HTML files
+            static_folder=os.path.join(FRONTEND_DIR, "static"))  # ✅ Correct path for CSS/JS files
 
 #conver to LF
 
@@ -316,13 +324,17 @@ def mt_scores_backup():
 def leaderboard():
     return render_template("leaderboard.html")  # Serve leaderboard.html
 
+# Serve static files (optional, if needed)
+@app.route("/static/<path:filename>")
+def static_files(filename):
+    return send_from_directory(os.path.join(FRONTEND_DIR, "static"), filename)
+
 print("Registered Routes:")
 with app.test_request_context():
     print(app.url_map)  # 👈 This will print all registered routes
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))  # ✅ Default to 5000 if PORT is not set
-    app.run(debug=True, host="0.0.0.0", port=port)  # ✅ Allows external access when deployed
+    app.run(debug=True, port=5000)
 
 
 
