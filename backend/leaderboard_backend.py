@@ -3,7 +3,11 @@ import pandas as pd
 import os
 import glob
 
-app = Flask(__name__, template_folder="../frontend/templates", static_folder="../frontend/static")
+# Absolute path to templates and static directories
+TEMPLATE_DIR = os.path.abspath("frontend/templates")
+STATIC_DIR = os.path.abspath("frontend/static")
+
+app = Flask(__name__, template_folder=TEMPLATE_DIR, static_folder=STATIC_DIR)
 
 #conver to LF
 # File Paths
@@ -81,5 +85,4 @@ def leaderboard_api():
     return jsonify({"message": "Leaderboard API is working!", "status": "success"})
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))  # ✅ Default to 5000 if PORT is not set
-    app.run(debug=True, host="0.0.0.0", port=port)  # ✅ Allows external access when deployed
+    app.run(debug=True, host="0.0.0.0", port=5000)
