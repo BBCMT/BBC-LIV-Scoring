@@ -19,12 +19,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Load teams and players data
     fetch(`${BASE_URL}/get_teams_and_players`)
-            .then(response => response.json())
-            .then(data => {
-                console.log("Teams and Players Loaded:", data);
-            })
-            .catch(error => console.error("Error fetching teams and players:", error)); // Ensure `.catch()` is attached
-
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+            return response.json();
+        })
+        .then(data => {
+            console.log("Teams and Players Loaded:", data);
+            // Add logic to populate dropdowns
+        })
+        .catch(err => console.error("Error loading teams/players:", err));
+        
     // Upload button event listener
     const uploadBtn = document.getElementById("uploadLeaderboard");
     if (uploadBtn) {
