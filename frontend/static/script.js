@@ -31,14 +31,14 @@ document.addEventListener("DOMContentLoaded", function () {
         .catch(error => console.error("Error loading teams/players:", error));
 
     // Upload button event listener
-    const uploadBtn = document.getElementById("uploadBtn");
-    if (uploadBtn) {
-        uploadBtn.addEventListener("click", function () {
+    const uploadBtn = document.getElementById("uploadLeaderboard");
+    if (uploadLeaderboard) {
+        uploadLeaderboard.addEventListener("click", function () {
             console.log("Upload button clicked!");
             // Add your upload logic here
         });
     } else {
-        console.warn("Warning: 'uploadBtn' not found in the HTML.");
+        console.warn("Warning: 'uploadLeaderboard' not found in the HTML.");
     }
 });
 

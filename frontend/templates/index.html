@@ -141,35 +141,41 @@
           .catch((err) => console.error("Error pre-loading PAR data:", err));
 
       // Load teams & players
-      fetch(`${BACKEND_URL}/get_teams_and_players")
-        .then((res) => res.json())
-        .then((data) => {
-          // Populate Team select
-          teamSelect.innerHTML = "<option value=''>Select Team</option>";
-          data.teams.forEach((team) => {
-            const opt = document.createElement("option");
-            opt.value = team;
-            opt.textContent = team;
-            teamSelect.appendChild(opt);
-          });
+      fetch(`${BACKEND_URL}/get_teams_and_players`)
+        .then(response => response.json())
+        .then(data => {
+            console.log("Teams & Players Loaded:", data);
+        
+        let teamSelect = document.getElementById("team");
+        let playerSelect = document.getElementById("player");
 
-          // On Team change -> fill Player dropdown
-          teamSelect.addEventListener("change", function () {
-            const selTeam = this.value;
+        // Clear dropdowns before adding new items
+        teamSelect.innerHTML = "<option value=''>Select Team</option>";
+        playerSelect.innerHTML = "<option value=''>Select Player</option>";
+
+        Object.keys(data.team_players).forEach(team => {
+            let option = document.createElement("option");
+            option.value = team;
+            option.textContent = team;
+            teamSelect.appendChild(option);
+        });
+
+        // Handle Team selection to load players
+        teamSelect.addEventListener("change", function () {
+            let selectedTeam = this.value;
             playerSelect.innerHTML = "<option value=''>Select Player</option>";
-            if (data.team_players[selTeam]) {
-              data.team_players[selTeam].forEach((p) => {
-                const opt = document.createElement("option");
-                opt.value = p.name;
-                opt.textContent = p.name;
-                // for auto-filling
-                opt.dataset.handicap = p.handicap;
-                opt.dataset.gender = p.gender;
-                opt.dataset.group = p.group; // ✅ Ensure Group data is included
-                playerSelect.appendChild(opt);
-              });
+
+            if (data.team_players[selectedTeam]) {
+                data.team_players[selectedTeam].forEach(player => {
+                    let option = document.createElement("option");
+                    option.value = player.name;
+                    option.textContent = player.name;
+                    playerSelect.appendChild(option);
+                });
             }
-          });
+        });
+    })
+    .catch(error => console.error("Error loading teams/players:", error));
 
           // ✅ When player changes, update handicap and group
           playerSelect.addEventListener("change", function () {
@@ -181,10 +187,11 @@
               
 
               // ✅ Fetch and update Playing Handicap
-              fetch(`${BACKEND_URL}/get_playing_handicap", {
+              fetch(`${BACKEND_URL}/get_playing_handicap`, {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({
+                      player: selOpt.value,  // ✅ Send player name
                       exact_handicap: parseFloat(selOpt.dataset.handicap),// Convert to number
                       gender: selOpt.dataset.gender
                   }),
@@ -197,7 +204,7 @@
             });
           })
           .catch((err) => console.error("Error loading teams/players:", err));  
-       });
+       
     // ------------------------------
     // 3) "Calculate Score" & "Upload to Leaderboard" logic
     // ------------------------------
@@ -239,8 +246,32 @@
         });
 
         // ✅ 2) Upload to Leaderboard (Handles 3 steps: submit score, update leaderboard, redirect)
-        uploadBtn.addEventListener("click", function (e) {
-            e.preventDefault();
+        document.addEventListener("DOMContentLoaded", function () {
+          const uploadLeaderboardBtn = document.getElementById("uploadLeaderboard");
+
+           if (uploadLeaderboardBtn) {
+               uploadLeaderboardBtn.addEventListener("click", function (e) {
+                   e.preventDefault();
+
+                  fetch(`${BACKEND_URL}/update_leaderboard`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" }
+                  })
+                  .then(response => response.json())
+                  .then(data => {
+                        if (data.error) {
+                            alert("Error updating leaderboard: " + data.error);
+                        } else {
+                            alert("Leaderboard updated successfully!");
+                            window.location.href = "leaderboard.html";  // ✅ Redirect only after success
+                        }
+                  })
+                  .catch(error => console.error("Upload to leaderboard error:", error));
+                });
+              } else {
+                      console.error("🚨 ERROR: uploadLeaderboard button not found!");
+              }
+          });
 
             let selectedPlayer = document.getElementById("player").value;
             let exactHandicap = document.getElementById("exactHandicap").value;
@@ -267,7 +298,7 @@
             };
 
             // ✅ Step 1: Submit Score to `scores.xlsx`
-            fetch(`${BACKEND_URL}/submit_score", {
+            fetch(`${BACKEND_URL}/submit_score`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload)
@@ -278,7 +309,7 @@
                     alert("Error submitting score: " + data.error);
                     throw new Error(data.error);
                 }
-                return fetch("http://127.0.0.1:5003/update_leaderboard", {
+                return fetch(`${BACKEND_URL}/update_leaderboard`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" }
                 });
@@ -287,22 +318,20 @@
             .then(data => {
                 if (data.error) {
                     alert("Error updating leaderboard: " + data.error);
-                    throw new Error(data.error);
-                }
-                alert("Leaderboard updated successfully!");
-
+                  } else {
+                    alert("Leaderboard updated successfully!");
+                    window.location.href = "leaderboard.html";  // ✅ Redirect only after success
+                  }         
+              })
                 
-                window.location.href = "leaderboard.html"; // ✅ Step 3: Redirect to leaderboard page
-            })
             .catch(err => console.error("Upload to leaderboard error:", err));
         });
-    });
       // ------------------------------
     // 4) Fetch and display leaderboard
     // ------------------------------  
           // ✅ Fetch and display Event Leaderboard
       //function loadEventLeaderboard() {
-          //fetch("http://127.0.0.1:5003/get_event_leaderboard")
+          //fetch("`${BACKEND_URL}/get_event_leaderboard`")
           //.then(response => response.json())
           //.then(data => {
               //if (data.error) {
@@ -499,7 +528,7 @@
       </div>
 
       <!-- 🔹 Upload & Display Leaderboard Button -->
-      <button id="uploadBtn">Upload & Display Leaderboard</button>
+      <button id="uploadLeaderboard">Upload & Display Leaderboard</button>
     </form>
 
     <!-- BOTTOM: "MT-scores-backup" -->

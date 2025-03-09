@@ -22,7 +22,7 @@ app = Flask(__name__,
             )
 CORS(app, resources={r"/*": {"origins": "*"}})  # ✅ Allow all origins
 
-print("🛠 DEBUG: Files in backend ->", os.listdir("backend"))
+#print("🛠 DEBUG: Files in backend ->", os.listdir("backend"))
 
 #conver to LF
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
