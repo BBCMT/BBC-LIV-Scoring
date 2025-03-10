@@ -44,9 +44,8 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function populateDropdowns(data) {
-    if (!data.team_players || Object.keys(data.team_players).length === 0 || !data.teams || data.teams.length === 0) {
-        console.error("Teams and Players Loaded:", data");
-        return;
+    if (!data.team_players || Object.keys(data.team_players.length === 0 || !data.teams || data.teams.length === 0)) {
+        console.error("Error: Missing teams or players data.");
     }
     const teamSelect = document.getElementById("teamSelect");
     const playerSelect = document.getElementById("playerSelect");
