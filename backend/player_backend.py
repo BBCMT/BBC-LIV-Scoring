@@ -53,9 +53,6 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)  # Ensure the folder exists
 def home():
     return render_template("index.html")  # Serve index.html/
 
-# Import other modules (after app is created)
-import routes  # Ensure this is placed after `app` initialization
-
 @app.route('/favicon.ico')
 def favicon():
     return send_from_directory(app.static_folder, "favicon.ico", mimetype="image/vnd.microsoft.icon")
