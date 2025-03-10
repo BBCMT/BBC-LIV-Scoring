@@ -8,8 +8,6 @@ from flask_cors import CORS
 import traceback
 import logging
 
-CORS(app, resources={r"/*": {"origins": "*"}})
-
 # Configure logging to show debug messages
 logging.basicConfig(level=logging.DEBUG)
 
@@ -54,6 +52,9 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)  # Ensure the folder exists
 @app.route("/")
 def home():
     return render_template("index.html")  # Serve index.html/
+
+# Import other modules (after app is created)
+import routes  # Ensure this is placed after `app` initialization
 
 @app.route('/favicon.ico')
 def favicon():
