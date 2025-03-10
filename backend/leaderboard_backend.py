@@ -3,6 +3,9 @@ import pandas as pd
 import os
 import glob
 import logging
+from flask_cors import CORS
+
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 # Configure logging to show debug messages
 logging.basicConfig(level=logging.DEBUG)

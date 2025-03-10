@@ -8,6 +8,8 @@ from flask_cors import CORS
 import traceback
 import logging
 
+CORS(app, resources={r"/*": {"origins": "*"}})
+
 # Configure logging to show debug messages
 logging.basicConfig(level=logging.DEBUG)
 
