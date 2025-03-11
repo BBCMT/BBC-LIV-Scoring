@@ -3,7 +3,11 @@ const BASE_URL = "https://bbc-liv-scoring.onrender.com";
 
 // ? Ensure the script runs only when the page is fully loaded
 document.addEventListener("DOMContentLoaded", function () {
-    console.log("Script loaded successfully! Fetching data...");
+    console.log("DOM fully loaded. Running scripts.");
+    loadTeamsAndPlayers();
+    loadParData();
+});
+    
 
     // Load course PAR data
     fetch(`${BASE_URL}/get_course_par`)
@@ -43,17 +47,22 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
-function populateDropdowns(data) {
-    if (!data.team_players || Object.keys(data.team_players.length === 0 || !data.teams || data.teams.length === 0)) {
-        console.error("Error: Missing teams or players data.");
-    }
-    const teamSelect = document.getElementById("teamSelect");
-    const playerSelect = document.getElementById("playerSelect");
+async function loadTeamsAndPlayers() {
+    try {
+        const response = await fetch(`${BASE_URL}/get_teams_and_players`);
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        const data = await response.json();
+        console.log("Teams & Players Loaded:", data);
 
-    if (!teamSelect || !playerSelect) {
-        console.warn("Dropdown elements not found!");
-        return;
+        if (!data.teams || !data.team_players) {
+            throw new Error("Teams or players data is missing.");
+        }
+
+        populateDropdowns(data.teams, data.team_players);
+    } catch (error) {
+        console.error("Error loading teams or players:", error);
     }
+}
 
     // Clear existing options
     teamSelect.innerHTML = '<option value="">Select Team</option>';
